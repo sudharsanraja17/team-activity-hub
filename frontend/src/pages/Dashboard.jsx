@@ -19,16 +19,14 @@ const Dashboard = () => {
           localStorage.getItem(
             "token"
           );
-
-        const res =
-          await axios.get(
-            "http://localhost:5000/api/dashboard/stats",
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
+const res = await axios.get(
+  `${import.meta.env.VITE_API_URL}/dashboard/stats`,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
 
         setStats(res.data);
       } catch (err) {
