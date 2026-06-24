@@ -121,50 +121,59 @@ exports.getMe = async (req, res) => {
 };
 
 // Send OTP
-exports.sendOtp = async (req, res) => {
+exports.sendOtp = async (
+  req,
+  res
+) => {
   try {
     const { email } = req.body;
 
-    const user = await User.findOne({
-      email: email.toLowerCase(),
-    });
+    const user =
+      await User.findOne({
+        email:
+          email.toLowerCase(),
+      });
 
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message:
+          "User not found",
       });
     }
 
     const otp = Math.floor(
-      100000 + Math.random() * 900000
+      100000 +
+        Math.random() *
+          900000
     ).toString();
 
     user.otp = otp;
-    user.otpExpiry = new Date(
-      Date.now() + 10 * 60 * 1000
-    );
+
+    user.otpExpiry =
+      Date.now() +
+      10 * 60 * 1000;
 
     await user.save();
 
-    console.log("OTP GENERATED:", otp);
+    await sendEmail(
+      user.email,
+      "Team Activity Hub Password Reset OTP",
+      `Your OTP is: ${otp}`
+    );
 
     res.json({
       success: true,
-      message: "OTP generated successfully",
-      otp: otp,
+      message:
+        "OTP sent successfully",
     });
-
   } catch (error) {
-
-    console.error(
-      "SEND OTP ERROR:",
-      error
-    );
+    console.error(error);
 
     res.status(500).json({
       success: false,
-      message: error.message,
+      message:
+        error.message,
     });
   }
 };
