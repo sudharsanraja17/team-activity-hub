@@ -2,7 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 
 const generateToken = require("../utils/generateToken");
-const sendEmail = require("../utils/sendEmail");
+// const sendEmail = require("../utils/sendEmail");
 
 // Register
 exports.register = async (req, res) => {
@@ -141,21 +141,27 @@ exports.sendOtp = async (req, res) => {
     ).toString();
 
     user.otp = otp;
-    user.otpExpiry = Date.now() + 10 * 60 * 1000;
+    user.otpExpiry = new Date(
+      Date.now() + 10 * 60 * 1000
+    );
 
     await user.save();
 
-    await sendEmail(
-      user.email,
-      "Team Activity Hub Password Reset OTP",
-      `Your OTP is: ${otp}`
-    );
+    console.log("OTP GENERATED:", otp);
 
     res.json({
       success: true,
-      message: "OTP sent successfully",
+      message: "OTP generated successfully",
+      otp: otp,
     });
+
   } catch (error) {
+
+    console.error(
+      "SEND OTP ERROR:",
+      error
+    );
+
     res.status(500).json({
       success: false,
       message: error.message,
