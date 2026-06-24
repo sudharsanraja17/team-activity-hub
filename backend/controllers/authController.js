@@ -2,7 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 
 const generateToken = require("../utils/generateToken");
-// const sendEmail = require("../utils/sendEmail");
+const sendEmail = require("../utils/sendEmail");
 
 // Register
 exports.register = async (req, res) => {
