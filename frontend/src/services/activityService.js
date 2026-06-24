@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API =
-  "http://localhost:5000/api/activities";
+  `${import.meta.env.VITE_API_URL}/activities`;
 
 const authHeader = () => ({
   headers: {
@@ -23,6 +23,7 @@ export const getPublicActivities =
       `${API}/public`,
       authHeader()
     );
+
     return res.data;
   };
 
@@ -33,6 +34,7 @@ export const createPublicActivity =
       data,
       authHeader()
     );
+
     return res.data;
   };
 
@@ -69,6 +71,7 @@ export const getPrivateActivities =
       `${API}/private`,
       authHeader()
     );
+
     return res.data;
   };
 
