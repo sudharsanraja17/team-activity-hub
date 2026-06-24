@@ -6,36 +6,84 @@ const connectDB = require("./config/db");
 
 dotenv.config();
 
-// Database Connection
+// Connect Database
 connectDB();
 
 const app = express();
 
-// Middleware
+/*
+====================================
+MIDDLEWARE
+====================================
+*/
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+/*
+====================================
+CORS FIX FOR VERCEL + LOCALHOST
+====================================
+*/
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: [
+      "https://team-activity-hub.vercel.app",
+      "http://localhost:5173",
+    ],
+    methods: [
+      "GET",
+      "POST",
+      "PUT",
+      "DELETE",
+      "OPTIONS",
+    ],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+    ],
     credentials: true,
   })
 );
 
-// Static Upload Folder
+/*
+====================================
+STATIC FILES
+====================================
+*/
+
 app.use(
   "/uploads",
   express.static("uploads")
 );
 
-// Routes
-const authRoutes = require("./routes/authRoutes");
-const activityRoutes = require("./routes/activityRoutes");
-const profileRoutes = require("./routes/profileRoutes");
-const dashboardRoutes = require("./routes/dashboardRoutes");
+/*
+====================================
+ROUTES
+====================================
+*/
 
-// API Routes
-app.use("/api/auth", authRoutes);
+const authRoutes = require(
+  "./routes/authRoutes"
+);
+
+const activityRoutes = require(
+  "./routes/activityRoutes"
+);
+
+const profileRoutes = require(
+  "./routes/profileRoutes"
+);
+
+const dashboardRoutes = require(
+  "./routes/dashboardRoutes"
+);
+
+app.use(
+  "/api/auth",
+  authRoutes
+);
 
 app.use(
   "/api/activities",
@@ -52,19 +100,29 @@ app.use(
   dashboardRoutes
 );
 
-// Health Check
+/*
+====================================
+HEALTH CHECK
+====================================
+*/
+
 app.get("/", (req, res) => {
-  res.json({
+  res.status(200).json({
     success: true,
     message:
       "Team Activity Hub API Running",
   });
 });
 
-// Global Error Handler
+/*
+====================================
+GLOBAL ERROR HANDLER
+====================================
+*/
+
 app.use(
   (err, req, res, next) => {
-    console.error(err.stack);
+    console.error(err);
 
     res.status(500).json({
       success: false,
@@ -74,7 +132,12 @@ app.use(
   }
 );
 
-// Start Server
+/*
+====================================
+SERVER
+====================================
+*/
+
 const PORT =
   process.env.PORT || 5000;
 
